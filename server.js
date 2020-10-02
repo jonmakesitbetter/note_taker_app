@@ -28,29 +28,26 @@ app.post("/api/notes", (req, res) => {
     const notesList = JSON.parse(data);
     req.body.id = uuidv4();
     notesList.push(req.body);
-    fs.writeFile(
-      "./db/db.json",
-      JSON.stringify(notesList),
-      "utf-8",
-      (err, data) => {
-        if (err) throw err;
-        res.json(notesList);
-      }
-    );
+    fs.writeFile("./db/db.json", JSON.stringify(notesList), "utf-8", (err) => {
+      if (err) throw err;
+      res.json(notesList);
+    });
   });
-  //readfile
-  //parsefile
-  //take parsed file and set variable to be used in line 31. Parsed file is now an array.
-  //push array req.body to  the variable array
-  //stringify and overwrite file with db.json, which will require fs.writeFile
-  //send file back to the user via res.json(JSON.parse)
-
-  //readFile, parse file, add the new file(change contents), re-stringify whole array, put back in json box,
 });
 
-// app.delete("/api/notes/:id", (req, res) => {
-
-// });
+app.delete("/api/notes/:id", (req, res) => {
+  fs.readFile("./db/db.json", "utf-8", (err, data) => {
+    if (err) throw err;
+    const list = JSON.parse(data);
+    notesList = list.filter((data) => {
+      return data.id != req.params.id;
+    });
+    fs.writeFile("./db/db.json", JSON.stringify(notesList), "utf-8", (err) => {
+      if (err) throw err;
+      res.json(notesList);
+    });
+  });
+});
 
 app.listen(PORT, function () {
   console.log("App listening on PORT: " + PORT);
